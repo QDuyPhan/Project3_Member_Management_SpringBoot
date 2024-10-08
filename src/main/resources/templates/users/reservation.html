@@ -1,0 +1,345 @@
+<!-- users/profile.html -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base">
+    <head>
+        <title>Reservation</title>
+    </head>
+    <body>
+        <!--Table display device-->
+        <div class="container" th:fragment="content">
+            <form
+                class="d-flex my-2 rounded"
+                th:action="@{/searchDevice}"
+                method="POST"
+                th:object="${device}"
+            >
+                <input
+                    class="form-control me-1"
+                    type="search"
+                    placeholder="Search"
+                    aria-label="Search"
+                    th:field="*{name}"
+                />
+                <button class="btn btn-primary" type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+            <div th:if="${param.success}">
+                <div class="alert alert-info">
+                    Your reservation has been confirmed.
+                </div>
+            </div>
+            <div th:if="${param.unavailable}">
+                <div class="alert alert-danger">
+                    The device has been booked for borrowing on this day.
+                </div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="device : ${availableDevices}">
+                        <td th:text="${device.id}">...</td>
+                        <td th:text="${device.name}">...</td>
+                        <td th:text="${device.description}">...</td>
+                        <td>
+                            <button
+                                type="button"
+                                th:data-deviceid="${device.id}"
+                                th:data-whatever="${device.name}"
+                                class="btn btn-info reservationButton"
+                            >
+                                Borrow
+                            </button>
+                        </td>
+                    </tr>
+                    <!--Confirm borrow device modal-->
+
+                    <div
+                        class="modal fade modalConfirm"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-hidden="true"
+                        id="myModal"
+                        aria-labelledby="exampleModalLabel"
+                    >
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5
+                                        class="modal-title"
+                                        id="exampleModalLabel"
+                                    >
+                                        Reservation Confirm
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <div class="modal-body textChange">
+                                    Are you sure you want to reserve device
+                                    <span class="fw-bold deviceName">... </span>
+                                    ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                    >
+                                        No
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary yesConfirmButton"
+                                        data-bs-target="#borrowDeviceForm"
+                                        data-bs-toggle="modal"
+                                        data-bs-dismiss="modal"
+                                    >
+                                        Yes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Register borrow device form-->
+                    <div
+                        class="modal fade"
+                        id="borrowDeviceForm"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="myModalFormLabel"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="modal-dialog modal-dialog-centered"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h5
+                                        class="modal-title"
+                                        id="borrowDeviceForm"
+                                    >
+                                        Register Device Borrowing
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <!-- Your form content goes here -->
+                                    <form
+                                        th:fragment="content"
+                                        th:object="${usage}"
+                                        th:action="@{/reservation}"
+                                        method="POST"
+                                    >
+                                        <fieldset class="mb-3">
+                                            <legend class="h5">
+                                                Device information
+                                            </legend>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label
+                                                        for="deviceID"
+                                                        class="form-label"
+                                                        >Device ID</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        id="deviceID"
+                                                        class="form-control"
+                                                        placeholder="120191"
+                                                        disabled
+                                                        th:field="*{device.id}"
+                                                    />
+                                                </div>
+                                                <div class="col">
+                                                    <label
+                                                        for="deviceName"
+                                                        class="form-label"
+                                                        >Device Name</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        id="deviceName"
+                                                        class="form-control"
+                                                        placeholder="Micro không dây 01"
+                                                        disabled
+                                                    />
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <fieldset class="mb-3">
+                                            <legend class="h5">
+                                                User information
+                                            </legend>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label
+                                                        for="userID"
+                                                        class="form-label"
+                                                        >User ID</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        id="userID"
+                                                        class="form-control"
+                                                        th:placeholder="${session.user.id}"
+                                                        th:value="${session.user.id}"
+                                                        disabled
+                                                    />
+                                                </div>
+                                                <div class="col">
+                                                    <label
+                                                        for="username"
+                                                        class="form-label"
+                                                        >Username</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        id="username"
+                                                        class="form-control"
+                                                        th:placeholder="${session.user.name}"
+                                                        th:value="${session.user.name}"
+                                                        disabled
+                                                    />
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <div class="mb-3">
+                                            <label
+                                                for="borrowDate"
+                                                class="form-label"
+                                                >Choose date to borrow</label
+                                            >
+                                            <input
+                                                type="datetime-local"
+                                                class="form-control"
+                                                id="datetimeInput"
+                                            />
+                                            <input
+                                                type="hidden"
+                                                id="hiddenInput"
+                                                th:field="*{reserveTime}"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >
+                                            Save
+                                        </button>
+                                        <script
+                                            th:inline="javascript"
+                                            type="text/javascript"
+                                        >
+                                            // Retrieve the input elements
+                                            var datetimeInput =
+                                                document.getElementById(
+                                                    "datetimeInput"
+                                                );
+                                            var hiddenInput =
+                                                document.getElementById(
+                                                    "hiddenInput"
+                                                );
+
+                                            // Add event listener for input change
+                                            datetimeInput.addEventListener(
+                                                "change",
+                                                function () {
+                                                    // Retrieve the value of the datetime input field
+                                                    var inputValue =
+                                                        datetimeInput.value;
+
+                                                    // Format the datetime value to be compatible with SQL datetime format
+                                                    var formattedDateTime =
+                                                        inputValue.replace(
+                                                            "T",
+                                                            " "
+                                                        ) + ":00";
+
+                                                    // Set the formatted datetime value to the hidden input field
+                                                    hiddenInput.value =
+                                                        formattedDateTime;
+                                                }
+                                            );
+                                        </script>
+                                    </form>
+                                </div>
+
+                                <!-- Modal Footer -->
+                                <div class="modal-footer">
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $(".table .reservationButton").on(
+                                "click",
+                                function (event) {
+                                    $("#myModal").modal("show");
+                                    let button = $(this); // 'this' refers to the clicked .reservationButton element
+                                    let recipient = button.data("whatever");
+                                    let deviceID = button.data("deviceid"); // Use .data() method to get the value of 'data-bs-whatever'
+                                    let yesAction = $(".yesConfirmButton");
+                                    if (
+                                        yesAction.attr("data-name") &&
+                                        yesAction.attr("data-deviceid")
+                                    ) {
+                                        yesAction.removeAttr("data-name");
+                                        yesAction.removeAttr("data-deviceid");
+                                    }
+                                    yesAction.attr("data-name", recipient);
+                                    yesAction.attr("data-deviceid", deviceID);
+                                    let modal = $(".modalConfirm"); // Find the closest parent modal element // Find the .modal-title element inside the modal
+                                    let modalBodyInput =
+                                        modal.find(".deviceName"); // Find the input element inside the modal-body
+                                    modalBodyInput.text(recipient); // Set the value of the input field in modal body
+                                }
+                            );
+                            $(".modalConfirm .yesConfirmButton").on(
+                                "click",
+                                function (event) {
+                                    $("#borrowDeviceForm").modal("show");
+                                    let buttonCofirm = $(this);
+                                    let id = buttonCofirm.attr("data-deviceid");
+                                    let name = buttonCofirm.attr("data-name");
+                                    console.log(id, name);
+                                    let inputID = $("#deviceID");
+                                    let inputName = $("#deviceName");
+                                    inputID.attr("placeholder", id + "");
+                                    inputName.attr("placeholder", name + "");
+                                }
+                            );
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

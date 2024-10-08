@@ -1,0 +1,337 @@
+<html
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{/admin/dashboard}"
+>
+    <head>
+        <title>Member Management</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div th:fragment="contentAdmin">
+            <nav
+                style="
+                    --bs-breadcrumb-divider: url(
+                        &#34;data:image/svg + xml,
+                        %3Csvgxmlns='http://www.w3.org/2000/svg'width='8'height='8'%3E%3Cpathd='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z'fill='%236c757d'/%3E%3C/svg%3E&#34;
+                    );
+                "
+                aria-label="breadcrumb"
+            >
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/admin/dashboard">Admin</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Member
+                    </li>
+                </ol>
+            </nav>
+            <div class="d-flex flex-column mb-4">
+                <h3 class="fw-bold">Member Directory</h3>
+                <hr style="margin: 0" />
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Search input and button -->
+                <div class="input-group">
+                    <input
+                        type="search"
+                        class="form-control"
+                        placeholder="Search by name or ID..."
+                        id="searchInput"
+                        th:value="${query}"
+                    />
+
+                    <button id="searchButton" class="btn btn-primary">
+                        Search
+                    </button>
+                    <script>
+                        $(document).ready(function () {
+                            // Event listener for the search button click
+                            $("#searchButton").click(function () {
+                                performSearch();
+                            });
+
+                            // Event listener for pressing Enter key in the search input field
+                            $("#searchInput").keypress(function (event) {
+                                if (event.which === 13) {
+                                    // Enter key pressed
+                                    event.preventDefault(); // Prevent form submission
+                                    performSearch();
+                                }
+                            });
+
+                            // Function to perform search
+                            function performSearch() {
+                                var query = $("#searchInput").val();
+                                window.location.href =
+                                    "/admin/membersList?query=" + query;
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+            <!-- Button group -->
+            <div class="d-flex justify-content-start align-items-center my-3">
+                <a
+                    href="/admin/membersList/showFormForAdd"
+                    class="btn btn-success me-3"
+                    >Add Member</a
+                >
+                <!-- <button type="button" class="btn btn-danger me-3" data-bs-toggle="modal" data-bs-target="#myModal">
+                    Batch Delete
+                </button> -->
+
+                <a
+                    href="/admin/membersList/showListBorrowedDevices"
+                    class="btn btn-info me-3"
+                    >Borrow / Return Device</a
+                >
+                <form
+                    name="fileUpload"
+                    method="POST"
+                    action="#"
+                    th:action="@{/admin/membersList/importExcel}"
+                    enctype="multipart/form-data"
+                    class="d-flex gap-3"
+                >
+                    <input
+                        type="file"
+                        name="file"
+                        id="excelFile"
+                        class="form-control"
+                    />
+                    <button
+                        type="submit"
+                        id="uploadExcelFile"
+                        class="btn btn-primary"
+                    >
+                        Upload
+                    </button>
+                </form>
+                <a href="/admin/studyAreaManagement" class="btn btn-info ms-5"
+                    >Entering study area</a
+                >
+            </div>
+            <!-- Modal Popup for multi delete -->
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Batch Delete</h4>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <form
+                                th:action="@{/admin/membersList/deleteByYear}"
+                                method="POST"
+                            >
+                                <div class="form-group mb-2">
+                                    <label for="yearInput" class="form-label"
+                                        >Year:</label
+                                    >
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        class="form-control"
+                                        id="yearInput"
+                                        name="activeYear"
+                                        placeholder="Enter active year"
+                                    />
+                                </div>
+                                <div
+                                    class="d-flex gap-2 justify-content-end mt-3"
+                                >
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal"
+                                    >
+                                        Close
+                                    </button>
+                                    <button
+                                        id="deleteButton"
+                                        type="submit"
+                                        class="btn btn-danger"
+                                        onclick=""
+                                    >
+                                        Delete
+                                    </button>
+                                    <script>
+                                        $(document).ready(function () {
+                                            $("#deleteButton").click(
+                                                function () {
+                                                    var yearValue =
+                                                        $("#yearInput").val();
+                                                    console.log(
+                                                        "Year value:",
+                                                        yearValue
+                                                    );
+                                                }
+                                            );
+                                        });
+                                    </script>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${param.importExcelFailed}">
+                <div class="alert alert-danger">
+                    Please upload excel file only!
+                </div>
+            </div>
+            <div th:if="${param.importExcelSuccessfully}">
+                <div class="alert alert-info">Import Excel Successfully!</div>
+            </div>
+            <table
+                class="table table-bordered table-striped table-responsive-md"
+            >
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Major</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="state: ${members}">
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.id}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.name}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.department}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.major}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.phone}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.email}"
+                        >
+                            ...
+                        </td>
+                        <td
+                            style="vertical-align: middle"
+                            th:text="${state.password}"
+                        >
+                            ...
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a
+                                    th:href="@{/admin/membersList/showFormForUpdate(memberId=${state.id})}"
+                                    class="btn btn-primary"
+                                    >Update</a
+                                >
+                                <a
+                                    th:href="@{/admin/membersList/deleteMember(memberId=${state.id})}"
+                                    class="btn btn-danger"
+                                    onclick="if (!(confirm('Are you sure you want to delete this member?')))
+                                               return false"
+                                    >Delete</a
+                                >
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Pagination -->
+            <div
+                class="d-flex justify-content-end align-items-center"
+                th:if="${totalPages > 0}"
+            >
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li
+                            th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}"
+                        >
+                            <a
+                                th:href="@{/admin/membersList(page=0, query=${query})}"
+                                class="page-link"
+                                >First</a
+                            >
+                        </li>
+                        <li
+                            th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}"
+                        >
+                            <a
+                                th:href="@{/admin/membersList(page=${currentPage - 1}, query=${query})}"
+                                class="page-link"
+                                >Previous</a
+                            >
+                        </li>
+                        <th:block
+                            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        >
+                            <li
+                                th:class="${currentPage == i ? 'page-item active' : 'page-item'}"
+                            >
+                                <a
+                                    th:href="@{/admin/membersList(page=${i}, query=${query})}"
+                                    class="page-link"
+                                    th:text="${i + 1}"
+                                ></a>
+                            </li>
+                        </th:block>
+                        <li
+                            th:class="${currentPage == totalPages - 1 ? 'page-item disabled' : 'page-item'}"
+                        >
+                            <a
+                                th:href="@{/admin/membersList(page=${currentPage + 1}, query=${query})}"
+                                class="page-link"
+                                >Next</a
+                            >
+                        </li>
+                        <li
+                            th:class="${currentPage == totalPages - 1 ? 'page-item disabled' : 'page-item'}"
+                        >
+                            <a
+                                th:href="@{/admin/membersList(page=${totalPages - 1}, query=${query})}"
+                                class="page-link"
+                                >Last</a
+                            >
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </body>
+</html>

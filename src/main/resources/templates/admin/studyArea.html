@@ -1,0 +1,81 @@
+
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Study Area</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+              integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+              crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link th:href="@{/css/admin.css}" rel="stylesheet"></link>
+    </head>
+    <body>
+        <div class="container">
+            <div class="d-flex gap-2 justify-content-center mt-5">
+                <form th:action="@{/admin/studyAreaManagement/checkID}" method="POST" style="padding-right: 8px;border-right: 1px solid #000;" th:object="${member}">
+                    <label for="memberID" class="form-label">Enter member ID</label>
+                    <input id="memberID" name="memberID" type="text" class="form-control" th:field="*{id}" maxlength="10" pattern="[0-9]*"/>
+                    <div th:if="${param.IDNotExist}" class="my-3">
+                        <div class="alert alert-danger">ID is not correct</div>
+                    </div>
+                </form>
+                <div class="d-flex flex-column">
+                    <div class="d-flex flex-column mb-3">
+                        <h3 class="fw-bold">Member Information</h3>
+                        <hr style="margin: 0;" />
+                    </div>
+                    <div th:if="${param.enterSuccessfully}" class="my-3">
+                        <div class="alert alert-success">Enter successfully!!</div>
+                    </div>
+                    <div th:if="${param.hasBlocked}" class="my-3">
+                        <div class="alert alert-danger">Your account has been blocked!!</div>
+                    </div>
+                    <form id="formInfo" th:action="@{/admin/studyAreaManagement/enteringStudyArea}" th:object="${member}" method="POST">
+                        <input type="hidden" th:field="*{id}"/>
+                        <div class="mb-2">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" class="form-control" th:field="*{name}" disabled/>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-2">
+                                <label for="department" class="form-label">Department</label>
+                                <input type="text" id="department" name="department" class="form-control" th:field="*{department}" disabled/>
+                            </div>
+                            <div class="col mb-2">
+                                <label for="major" class="form-label">Major</label>
+                                <input type="text" id="major" name="major" class="form-control" th:field="*{major}" disabled/>
+                            </div>
+                        </div>
+                        <button id="confirmAccess" type="submit" class="btn btn-primary mt-2">Confirm Access</button>
+                    </form>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const form = document.getElementById('formInfo');
+                            const fullNameInput = document.getElementById('fullName');
+                            const submitButton = document.getElementById('confirmAccess');
+
+                            // Ngăn chặn việc nhấn submit khi input trống
+                            form.addEventListener('submit', function (event) {
+                                if (fullNameInput.value.trim() === '') {
+                                    event.preventDefault(); // Ngăn chặn gửi form
+                                    alert('Please enter your ID.'); // Thông báo lỗi
+                                }
+                            });
+
+                            if (fullNameInput.value.trim() !== '') {
+                                console.log("has focused");
+                                submitButton.focus(); // Focus vào nút submit
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

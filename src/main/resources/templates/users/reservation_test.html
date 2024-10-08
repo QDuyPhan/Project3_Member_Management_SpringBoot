@@ -1,0 +1,85 @@
+<!-- users/profile.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="base">
+    <head>
+        <title>Reservation</title>
+    </head>
+    <body>
+        <div class="container" th:fragment="content">
+            <h3>Register Device Borrowing</h3>
+            <hr>
+            <div class="d-flex justify-content-between align-items-start h-100">
+                <div class="h-100 w-50 p-3">
+                    <div th:if="${param.success}">
+                        <div class="alert alert-info">Your reservation has been confirmed.</div>
+                    </div>
+                    <div th:if="${param.unavailable}">
+                        <div class="alert alert-danger">The device has been booked for borrowing on this day.</div>
+                    </div>
+                    <form action="#" th:action="@{/reservation}" method="POST" th:object="${usage}">
+                        <input type="datetime-local" class="form-control mb-4 w-50" placeholder="Date" required id="datetimeInput"/>
+                        <input type="hidden" id="hiddenInput"  th:field="*{reserveTime}">
+                        <input type="text" id="deviceId" class="form-control mb-4 w-50" placeholder="Device ID" required th:field="*{device.id}"/>
+
+                        <button type="submit" class="btn btn-info col-2" onclick="changeReserveTime()">Save</button>
+                        <script th:inline="javascript" type="text/javascript">
+                            // Retrieve the input elements
+                            var datetimeInput = document.getElementById('datetimeInput');
+                            var hiddenInput = document.getElementById('hiddenInput');
+
+                            // Add event listener for input change
+                            datetimeInput.addEventListener('change', function () {
+                                // Retrieve the value of the datetime input field
+                                var inputValue = datetimeInput.value;
+
+                                // Format the datetime value to be compatible with SQL datetime format
+                                var formattedDateTime = inputValue.replace("T", " ") + ':00';
+
+                                // Set the formatted datetime value to the hidden input field
+                                hiddenInput.value = formattedDateTime;
+                            });
+                        </script>
+                    </form>
+
+                    <hr>
+                    <a th:href="@{/}">Back to Home</a>
+                </div>
+
+                <div class="h-100 w-50">
+                    <form class="d-flex my-2 rounded" th:action="@{/searchDevice}" method="POST" th:object="${device}">
+                        <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search" th:field="*{name}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="device : ${availableDevices}">
+                                <td th:text="${device.id}">...</td>
+                                <td th:text="${device.name}">...</td>
+                                <td th:text="${device.description}">...</td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-borrow" th:attr="onclick=|setId(${device.id})|">Reserve</button>
+                                    <script th:inline="javascript">
+                                        window.setId = (id) => {
+                                            document.querySelector("#deviceId").value = id;
+                                        };
+                                    </script>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

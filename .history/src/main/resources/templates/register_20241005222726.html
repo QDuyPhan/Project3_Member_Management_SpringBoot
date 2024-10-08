@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Register</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link th:href="@{/css/login.css}" rel="stylesheet">
+        </link>
+    </head>
+
+    <body>
+        <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <!----------------------- Login Container -------------------------->
+            <div class="row border rounded-5 p-3 bg-white shadow box-area">
+                <!--------------------------- Left Box ----------------------------->
+                <div class="col-md-6 right-box" style="padding: 30px 30px 30px 20px">
+                    <form action="#" th:action="@{/register}" th:object="${member}" method="POST"
+                          class="row align-items-center">
+                        <div class="header-text mb-2 w-100 d-flex flex-column justify-content-center">
+                            <h2 class="text-center fw-bold">Sign up</h2>
+                        </div>
+                        <!-- <div th:if="${param.error}">
+                            <div class="alert alert-danger" th:text="${param.error}">...</div>
+                        </div> -->
+                        <div class="mb-3">
+                            <label for="idForm" class="form-label">ID</label>
+                            <input type="number" id="idForm" class="form-control form-control-lg bg-light fs-6"
+                                   placeholder="Your ID" th:field="*{id}"  required
+                          minlength="10"
+                          maxlength="10" />
+                        <div th:if="${errorid}">
+                            <div class="alert alert-danger" th:text="${errorid}">...</div>
+                        </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nameForm" class="form-label">Name</label>
+                            <input type="text" id="nameForm" class="form-control form-control-lg bg-light fs-6"
+                                   placeholder="Name" th:field="*{name}" />
+                                     <div th:if="${errorname}">
+                            <div class="alert alert-danger" th:text="${errorname}">...</div>
+                        </div>
+                        </div>
+                        <div class="d-flex gap-2 mb-3">
+                            <div class="col">
+                                <label for="departmentForm" class="form-label">Department</label>
+                                <!-- <input type="text" id="departmentForm" class="form-control form-control-lg bg-light fs-6" placeholder="Department" th:field="*{department}"  /> -->
+                                <select class="form-select" id="departmentForm" th:field="*{department}" aria-label="Default select example">
+                                    <option selected value="SP KHTN">SP KHTN</option>
+                                    <option value="CNTT">CNTT</option>
+                                    <option value="Ngoại Ngữ">Ngoại Ngữ</option>
+                                    <option value="SP KHXH">SP KHXH</option>
+                                    <option value="Nghệ Thuật">Nghệ Thuật</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="majorForm" class="form-label">Major</label>
+                                <!-- <input type="text" id="majorForm" class="form-control form-control-lg bg-light fs-6" placeholder="Major" th:field="*{major}"  /> -->
+                                <select class="form-select" id="majorForm" th:field="*{major}" aria-label="Default select example">
+                                    <option value="">Select Major</option>
+                                </select>
+                                <script th:inline="javascript">
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const departmentSelect = document.getElementById('departmentForm');
+                                        const majorSelect = document.getElementById('majorForm');
+
+                                        // Define a mapping of departments to corresponding majors
+                                        const departmentMajors = {
+                                            'SP KHTN': ['Sư phạm Toán', 'Sư phạm Lí', 'Sư phạm Hóa'],
+                                            'CNTT': ['Hệ thống thông tin', 'Kĩ thuật máy tính', 'Khoa học máy tính', 'Kĩ thuật phần mềm'],
+                                            'Nghệ Thuật': ['Sư phạm Âm nhạc', 'Sư phạm Mỹ Thuật'],
+                                            'Ngoại Ngữ': ['Sư phạm Anh', 'Ngôn Ngữ Anh'],
+                                            'SP KHXH': ['Sư phạm Văn', 'Sử', 'Địa']
+                                        };
+
+                                        // Function to update majors based on selected department
+                                        function updateMajors() {
+                                            const selectedDepartment = departmentSelect.value;
+                                            majorSelect.innerHTML = ''; // Clear all existing options
+
+                                            if (selectedDepartment && departmentMajors[selectedDepartment]) {
+                                                departmentMajors[selectedDepartment].forEach(major => {
+                                                    const option = document.createElement('option');
+                                                    option.value = major;
+                                                    option.textContent = major;
+                                                    majorSelect.appendChild(option);
+                                                });
+                                                // Enable the major dropdown
+                                                majorSelect.disabled = false;
+                                            } else {
+                                                // If no department is selected or no majors available, disable the major dropdown
+                                                majorSelect.disabled = true;
+                                            }
+                                        }
+
+                                        // Event listener for department selection change
+                                        departmentSelect.addEventListener('change', updateMajors);
+
+                                        // Trigger updateMajors function on page load to initialize majors based on default selected department
+                                        updateMajors();
+                                    });
+                                </script>
+
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phoneForm" class="form-label">Phone number</label>
+                            <input type="tel" id="phoneForm" class="form-control form-control-lg bg-light fs-6"
+                                   placeholder="Phone number" th:field="*{phone}" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailForm" class="form-label">Email</label>
+                            <input type="email" id="emailForm" class="form-control form-control-lg bg-light fs-6"
+                                   placeholder="Email address" th:field="*{email}" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordForm" class="form-label">Password</label>
+                            <input type="password" id="passwordForm" class="form-control form-control-lg bg-light fs-6"
+                                   placeholder="Password" th:field="*{password}" />
+                        </div>
+                        <div class="input-group mb-3">
+                            <button type="submit" class="btn btn-lg btn-primary w-100 fs-6">Sign up</button>
+                        </div>
+                        <div class="row">
+                            <small>Already have account? <a th:href="@{/login}">Login here</a></small>
+                        </div>
+                    </form>
+                </div>
+                <!-------------------- ------ Right Box ---------------------------->
+                <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box"
+                     style="background: #103cbe;">
+                    <div class="featured-image mb-3">
+                        <img class="img-fluid" th:src="@{/icon.png}" alt="Logo" style="width: 150px;height: 150px">
+                    </div>
+                    <p class="text-white fs-2" style="font-weight: 600;">Member Management</p>
+                    <small class="text-white text-wrap text-center" style="width: 17rem">Join in and experience our
+                        platform.</small>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

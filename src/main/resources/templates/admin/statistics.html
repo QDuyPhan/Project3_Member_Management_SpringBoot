@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{/admin/dashboard}">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Statistics</title>
+    </head>
+
+    <body>
+        <div th:fragment="contentAdmin" class="w-100 h-100 gap-2 d-flex flex-column">
+            <div class="gap-2 d-flex" style="height: 45vh">
+                <!--Device statistics-->
+                <div class="flex-grow-1 d-flex flex-column gap-3 p-3 h-100 border" style="border-color: #000 !important;">
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-bold w-100" style="margin-bottom: 0px !important; color: #0e2238;">Device</h5>
+                        <div class="input-group w-100">
+                            <input id="inputSearchDevice" type="search" class="form-control" placeholder="Search...">
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="col w-100">
+                            <select onchange="getStatisticDevice()" id="selectDevice" class="form-select w-50" aria-label="Default select example">
+                                <option selected value="borrowed">Thiết bị được mượn</option>
+                                <option value="borrowing">Thiết bị đang được mượn</option>
+                            </select>
+                        </div>
+                        <div class="col d-flex gap-1">
+                            <input onchange="getStatisticDevice()" id="inputDateStartDevice" type="date" class="form-control" placeholder="Date" required />
+                            <input onchange="getStatisticDevice()" id="inputDateEndDevice" type="date" class="form-control" placeholder="Date" required />
+                        </div>
+                    </div>
+                    <div style="max-height: 247px;overflow-y: scroll">
+                        <table style="margin-bottom: 0px;" class="table table-bordered table-striped" id="tableDevice">
+                            <thead class="table-dark" style="position: sticky;top: 0">
+                                <tr>
+                                    <th scope="col">No.</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Borrow Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u, stat : ${borrowedDeviceData}">
+                                    <td th:text="${stat.index + 1}">...</td>
+                                    <td th:text="${u.device.id}">...</td>
+                                    <td  th:text="${u.device.name}">...</td>
+                                    <td  th:text="${u.device.description}">...</td>
+                                    <td  th:text="${u.borrowedTime}">...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="d-flex gap-2">
+                            <span>Total: </span>
+                            <span class="fw-bold" th:text="${totalDevices}" id="totalDevices">...</span>
+                        </div>
+                    </div>
+                </div>
+                <!--Punish statistics-->
+                <div class="flex-grow-1 d-flex flex-column gap-3 p-3 border h-100" style="border-color: #000 !important;">
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-bold w-100" style="margin-bottom: 0px !important; color: #0e2238;">Punishment</h5>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between" style="border-bottom: 1px solid #000; padding-bottom: 4px">
+                            <span>On handling:</span>
+                            <span class="fw-bold" th:text="${unresolvedDisciplineData}">...</span>
+                        </div>
+                        <div class="d-flex justify-content-between" style="border-bottom: 1px solid #000; padding-bottom: 4px">
+                            <span>Done:</span>
+                            <span class="fw-bold" th:text="${resolvedDisciplineData}">...</span>
+                        </div>
+                        <div class="d-flex justify-content-between" style="border-bottom: 1px solid #000; padding-bottom: 4px">
+                            <span>Total Money:</span>
+                            <span class="fw-bold" th:text="${totalFineData}">...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Member statistics-->
+            <div class="flex-grow-1 d-flex flex-column gap-3 p-2 col w-100 border h-100" style="border-color: #000 !important;">
+                <div class="d-flex align-items-center">
+                    <h5 class="fw-bold" style="width: fit-content;margin-bottom: 0px !important; color: #0e2238;">Member</h5>
+                    <div class="d-flex justify-content-end w-100 gap-1">
+                        <div class="d-flex gap-1">
+                            <div class="w-100">
+                                <select onchange="getStatisticMember()"  class="form-select" id="departmentForm" aria-label="Default select example">
+                                     <option selected value="ALL">--Tất cả các khoa--</option>
+                                    <option value="SP KHTN">SP KHTN</option>
+                                    <option value="CNTT">CNTT</option>
+                                    <option value="Ngoại Ngữ">Ngoại Ngữ</option>
+                                    <option value="SP KHXH">SP KHXH</option>
+                                    <option value="Nghệ Thuật">Nghệ Thuật</option>
+                                </select>
+                            </div>
+                            <div class="w-100" style="min-width: 200px">
+                                <!-- <input type="text" id="majorForm" class="form-control form-control-lg bg-light fs-6" placeholder="Major" th:field="*{major}"  /> -->
+                                <select onchange="getStatisticMember()" class="form-select" id="majorForm" aria-label="Default select example">
+                                    <option value="">Select Major</option>
+                                </select>
+                                <script th:inline="javascript">
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const departmentSelect = document.getElementById('departmentForm');
+                                        const majorSelect = document.getElementById('majorForm');
+
+                                        // Define a mapping of departments to corresponding majors
+                                        const departmentMajors = {
+                                            'ALL':['--Tất cả ngành--'],
+                                            'SP KHTN': ['--Tất cả ngành--', 'Sư phạm Toán', 'Sư phạm Lí', 'Sư phạm Hóa'],
+                                            'CNTT': ['--Tất cả ngành--', 'Hệ thống thông tin', 'Kỹ thuật máy tính', 'Khoa học máy tính', 'Kỹ thuật phần mềm'],
+                                            'Nghệ Thuật': ['--Tất cả ngành--', 'Sư phạm Âm nhạc', 'Sư phạm Mỹ thuật'],
+                                            'Ngoại Ngữ': ['--Tất cả ngành--', 'Sư phạm Anh', 'Ngôn ngữ Anh'],
+                                            'SP KHXH': ['--Tất cả ngành--', 'Sư phạm Văn', 'Sư phạm Sử', 'Sư phạm Địa']
+                                        };
+
+                                        // Function to update majors based on selected department
+                                        function updateMajors() {
+                                            const selectedDepartment = departmentSelect.value;
+                                            majorSelect.innerHTML = ''; // Clear all existing options
+
+                                            if (selectedDepartment && departmentMajors[selectedDepartment]) {
+                                                departmentMajors[selectedDepartment].forEach(major => {
+                                                    const option = document.createElement('option');
+                                                    option.value = major;
+                                                    option.textContent = major;
+                                                    majorSelect.appendChild(option);
+                                                });
+                                                // Enable the major dropdown
+                                                majorSelect.disabled = false;
+                                            } else {
+                                                // If no department is selected or no majors available, disable the major dropdown
+                                                majorSelect.disabled = true;
+                                            }
+                                        }
+
+                                        // Event listener for department selection change
+                                        departmentSelect.addEventListener('change', updateMajors);
+
+                                        // Trigger updateMajors function on page load to initialize majors based on default selected department
+                                        updateMajors();
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <input onchange="getStatisticMember()" type="date" class="form-control"  placeholder="Date" required id="startDateInput"/>
+                            <input onchange="getStatisticMember()" type="date" class="form-control" placeholder="Date" required id="endDateInput"/>
+                        </div>
+                    </div>
+                </div>
+                <div style="max-height: 329px;overflow-y: scroll">
+                    <table id="tableMember" style="margin-bottom: 0px;" class="table table-bordered table-striped">
+                        <thead class="table-dark" style="position:sticky;top: 0">
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Department</th>
+                                <th scope="col">Major</th>
+                                <th scope="col">Entered Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usage, stat : ${memberData}">
+                                <td th:text="${stat.index + 1}">...</td>
+                                <td th:text="${usage.member.id}">...</td>
+                                <td th:text="${usage.member.name}">...</td>
+                                <td th:text="${usage.member.department}">...</td>
+                                <td th:text="${usage.member.major}">...</td>
+                                <td th:text="${usage.enteredTime}">...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end align-items-center">
+                    <div class="d-flex gap-2">
+                        <span>Total Members: </span>
+                        <span id="totalMembers" class="fw-bold" th:text="${totalMembers}">...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>
