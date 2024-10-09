@@ -97,7 +97,7 @@
                                         ); // Loại bỏ các ký tự không hợp lệ
                                     } else {
                                         document.getElementById(
-                                            "errorName"
+                                            "error"
                                         ).textContent = "";
                                     }
                                 }
@@ -262,7 +262,7 @@
                                         ); // Loại bỏ các ký tự không hợp lệ
                                     } else {
                                         document.getElementById(
-                                            "errorPhone"
+                                            "error"
                                         ).textContent = "";
                                     }
                                 }
@@ -293,34 +293,8 @@
                                 required
                                 minlength="10"
                                 maxlength="20"
-                                onpaste="return false"
-                                oninput="checkInputPassword()"
                                 th:field="*{password}"
                             />
-                            <div id="errorPassword" class="text-danger"></div>
-
-                            <script>
-                                function checkInputPassword() {
-                                    const passwordInput =
-                                        document.getElementById("passwordForm");
-                                    const inputValue = passwordInput.value;
-                                    const containsSpace =
-                                        inputValue.includes(" ");
-
-                                    if (containsSpace) {
-                                        document.getElementById(
-                                            "errorPassword"
-                                        ).textContent =
-                                            "Password không được chứa khoảng trắng.";
-                                        passwordInput.value =
-                                            inputValue.replace(/\s+/g, ""); // Loại bỏ khoảng trắng
-                                    } else {
-                                        document.getElementById(
-                                            "passwordForm"
-                                        ).textContent = "";
-                                    }
-                                }
-                            </script>
                         </div>
                         <div class="input-group mb-3">
                             <button

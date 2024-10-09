@@ -78,7 +78,7 @@
                                 oninput="checkInputName()"
                                 minlength="2"
                             />
-                            <div id="errorName" class="text-danger"></div>
+                            <div id="error" class="text-danger"></div>
                             <script>
                                 function checkInputName() {
                                     const textInput =
@@ -88,7 +88,7 @@
 
                                     if (!regex.test(inputValue)) {
                                         document.getElementById(
-                                            "errorName"
+                                            "error"
                                         ).textContent =
                                             "Vui lòng chỉ nhập ký tự chữ cái và khoảng trắng.";
                                         textInput.value = inputValue.replace(
@@ -97,7 +97,7 @@
                                         ); // Loại bỏ các ký tự không hợp lệ
                                     } else {
                                         document.getElementById(
-                                            "errorName"
+                                            "error"
                                         ).textContent = "";
                                     }
                                 }
@@ -240,33 +240,9 @@
                                 required
                                 minlength="10"
                                 maxlength="15"
-                                oninput="checkInputPhone()"
                                 th:field="*{phone}"
                             />
-                            <div id="errorPhone" class="text-danger"></div>
-                            <script>
-                                function checkInputPhone() {
-                                    const telInput =
-                                        document.getElementById("phoneForm");
-                                    const inputValue = telInput.value;
-                                    const regex = /^[0-9]*$/; // Chỉ chấp nhận ký tự số
-
-                                    if (!regex.test(inputValue)) {
-                                        document.getElementById(
-                                            "errorPhone"
-                                        ).textContent =
-                                            "Vui lòng chỉ nhập ký tự số.";
-                                        telInput.value = inputValue.replace(
-                                            /[^0-9]/g,
-                                            ""
-                                        ); // Loại bỏ các ký tự không hợp lệ
-                                    } else {
-                                        document.getElementById(
-                                            "errorPhone"
-                                        ).textContent = "";
-                                    }
-                                }
-                            </script>
+                            <div id="error" class="text-danger"></div>
                         </div>
                         <div class="mb-3">
                             <label for="emailForm" class="form-label"
@@ -293,34 +269,8 @@
                                 required
                                 minlength="10"
                                 maxlength="20"
-                                onpaste="return false"
-                                oninput="checkInputPassword()"
                                 th:field="*{password}"
                             />
-                            <div id="errorPassword" class="text-danger"></div>
-
-                            <script>
-                                function checkInputPassword() {
-                                    const passwordInput =
-                                        document.getElementById("passwordForm");
-                                    const inputValue = passwordInput.value;
-                                    const containsSpace =
-                                        inputValue.includes(" ");
-
-                                    if (containsSpace) {
-                                        document.getElementById(
-                                            "errorPassword"
-                                        ).textContent =
-                                            "Password không được chứa khoảng trắng.";
-                                        passwordInput.value =
-                                            inputValue.replace(/\s+/g, ""); // Loại bỏ khoảng trắng
-                                    } else {
-                                        document.getElementById(
-                                            "passwordForm"
-                                        ).textContent = "";
-                                    }
-                                }
-                            </script>
                         </div>
                         <div class="input-group mb-3">
                             <button

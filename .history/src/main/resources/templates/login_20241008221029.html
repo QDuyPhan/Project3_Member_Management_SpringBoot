@@ -111,33 +111,28 @@
                                 class="form-control form-control-lg bg-light fs-6"
                                 placeholder="Password"
                                 th:field="*{password}"
-                                oninput="checkInputPassword()"
+                                oninput="encryptPassword()"
                                 required
                             />
-                            <div id="errorPassword" class="text-danger"></div>
-
-                            <script>
-                                function checkInputPassword() {
+                            <!-- <script>
+                                function encryptPassword() {
                                     const passwordInput =
-                                        document.getElementById("passwordForm");
-                                    const inputValue = passwordInput.value;
-                                    const containsSpace =
-                                        inputValue.includes(" ");
-
-                                    if (containsSpace) {
-                                        document.getElementById(
-                                            "errorPassword"
-                                        ).textContent =
-                                            "Password không được chứa khoảng trắng.";
-                                        passwordInput.value =
-                                            inputValue.replace(/\s+/g, ""); // Loại bỏ khoảng trắng
-                                    } else {
-                                        document.getElementById(
-                                            "passwordForm"
-                                        ).textContent = "";
-                                    }
+                                        document.getElementById("password");
+                                    const encryptedPassword = encrypt(
+                                        passwordInput.value
+                                    );
+                                    passwordInput.value = encryptedPassword;
                                 }
-                            </script>
+
+                                function encrypt(password) {
+                                    // Đây là nơi bạn có thể thực hiện mã hóa mật khẩu theo yêu cầu của bạn
+                                    // Đây chỉ là ví dụ đơn giản, bạn có thể sử dụng các thuật toán mã hóa mạnh hơn
+                                    return password
+                                        .split("")
+                                        .map((char) => "*")
+                                        .join("");
+                                }
+                            </script> -->
                             <span
                                 class="position-absolute d-flex justify-content-center align-items-center"
                                 style="

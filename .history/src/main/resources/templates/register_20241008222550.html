@@ -294,13 +294,13 @@
                                 minlength="10"
                                 maxlength="20"
                                 onpaste="return false"
-                                oninput="checkInputPassword()"
+                                oninput="checkInput()"
                                 th:field="*{password}"
                             />
-                            <div id="errorPassword" class="text-danger"></div>
+                            <div id="errorPassword" class="error-message"></div>
 
                             <script>
-                                function checkInputPassword() {
+                                function checkInput() {
                                     const passwordInput =
                                         document.getElementById("passwordForm");
                                     const inputValue = passwordInput.value;

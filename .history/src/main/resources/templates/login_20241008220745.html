@@ -89,7 +89,7 @@
                         <div class="mb-3">
                             <label for="idForm" class="form-label">ID</label>
                             <input
-                                type="number"
+                                type="text"
                                 id="idForm"
                                 name="idForm"
                                 pattern="[0-9]*"
@@ -111,31 +111,26 @@
                                 class="form-control form-control-lg bg-light fs-6"
                                 placeholder="Password"
                                 th:field="*{password}"
-                                oninput="checkInputPassword()"
+                                oninput="encryptPassword()"
                                 required
                             />
-                            <div id="errorPassword" class="text-danger"></div>
-
                             <script>
-                                function checkInputPassword() {
+                                function encryptPassword() {
                                     const passwordInput =
                                         document.getElementById("passwordForm");
-                                    const inputValue = passwordInput.value;
-                                    const containsSpace =
-                                        inputValue.includes(" ");
+                                    const encryptedPassword = encrypt(
+                                        passwordInput.value
+                                    );
+                                    passwordInput.value = encryptedPassword;
+                                }
 
-                                    if (containsSpace) {
-                                        document.getElementById(
-                                            "errorPassword"
-                                        ).textContent =
-                                            "Password không được chứa khoảng trắng.";
-                                        passwordInput.value =
-                                            inputValue.replace(/\s+/g, ""); // Loại bỏ khoảng trắng
-                                    } else {
-                                        document.getElementById(
-                                            "passwordForm"
-                                        ).textContent = "";
-                                    }
+                                function encrypt(password) {
+                                    // Đây là nơi bạn có thể thực hiện mã hóa mật khẩu theo yêu cầu của bạn
+                                    // Đây chỉ là ví dụ đơn giản, bạn có thể sử dụng các thuật toán mã hóa mạnh hơn
+                                    return password
+                                        .split("")
+                                        .map((char) => "*")
+                                        .join("");
                                 }
                             </script>
                             <span
@@ -173,7 +168,7 @@
                                                 ? "text"
                                                 : "password";
                                         password.setAttribute("type", type);
-                                        // toggle the eye icon
+                                        // toggle the eye icon class
                                         this.classList.toggle("fa-eye");
                                         this.classList.toggle("fa-eye-slash");
                                     }
